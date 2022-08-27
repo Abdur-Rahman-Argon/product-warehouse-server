@@ -21,6 +21,15 @@ async function run() {
     await client.connect;
     const collection = client.db("test").collection("devices");
     // console.log("mongo Connect");
+
+    const itemsCollection = client.db("services").collection("AllItems");
+
+    app.get("/AllItems", async (req, res) => {
+      const query = {};
+      const cursor = await itemsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
   } finally {
     // await client.close();
   }
