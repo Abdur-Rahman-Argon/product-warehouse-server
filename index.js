@@ -27,6 +27,7 @@ async function run() {
 
     const collection = client.db("test").collection("devices");
     const itemsCollection = client.db("services").collection("AllItems");
+    const userCollection = client.db("services").collection("users");
 
     // verify jwt token
     const verifyJWT = (req, res, next) => {
@@ -142,11 +143,7 @@ async function run() {
         { expiresIn: "1d" }
       );
 
-      const result = await itemsCollection.updateOne(
-        filter,
-        updateDoc,
-        options
-      );
+      const result = await userCollection.updateOne(filter, updateDoc, options);
       res.send({ result, success: true, accessToken: token });
     });
 
