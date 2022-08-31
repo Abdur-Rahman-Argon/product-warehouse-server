@@ -26,8 +26,24 @@ async function run() {
     await client.connect;
 
     const collection = client.db("test").collection("devices");
-
     const itemsCollection = client.db("services").collection("AllItems");
+
+    // verify jwt token
+    const verifyJWT = (req, res, next) => {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) {
+        return res.status(401).send({ message: "unauthorized" });
+      }
+      const token = authHeader.split(" ")[1];
+      jwt.verify(token, tokenSecret, (err, decoded) => {
+        if (err) {
+          return res.status(403).send({ message: "forbidden" });
+        } else {
+          req.decoded = decoded;
+          next();
+        }
+      });
+    };
 
     //
     app.get("/AllItems", async (req, res) => {
