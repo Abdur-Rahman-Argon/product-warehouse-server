@@ -62,6 +62,23 @@ async function run() {
       res.send(result);
     });
 
+    // one items data update api
+    app.put("/stockUpdate/:id", async (req, res) => {
+      const id = req.params.id;
+      const stock = req.body;
+      const filter = { _id: ObjectID(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: { stock: stock.stock, quantity: stock.quantity },
+      };
+      const result = await itemsCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
+
     //
   } finally {
     // await client.close();
