@@ -79,6 +79,26 @@ async function run() {
       res.send(result);
     });
 
+    // delivery status update
+    app.put("/deliveryUpdate/:id", async (req, res) => {
+      const id = req.params.id;
+      const delivery = req.body;
+      const filter = { _id: ObjectID(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          delivery: delivery.delivery,
+          stock: delivery.stock,
+        },
+      };
+      const result = await itemsCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
+
     //
   } finally {
     // await client.close();
