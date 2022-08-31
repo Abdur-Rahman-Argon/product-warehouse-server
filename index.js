@@ -99,6 +99,13 @@ async function run() {
       res.send(result);
     });
 
+    // new items post api
+    app.post("/AllItems", verifyJWT, async (req, res) => {
+      const items = req.body;
+      const result = await itemsCollection.insertOne(items);
+      res.send(result);
+    });
+
     //
   } finally {
     // await client.close();
