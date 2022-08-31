@@ -11,23 +11,6 @@ const tokenSecret = process.env.JWT_SECRET_KEY;
 app.use(cors());
 app.use(express.json());
 
-// verify jwt token
-const verifyJWT = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).send({ message: "unauthorized" });
-  }
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, tokenSecret, (err, decoded) => {
-    if (err) {
-      return res.status(403).send({ message: "forbidden" });
-    } else {
-      req.decoded = decoded;
-      next();
-    }
-  });
-};
-
 //  MongoDB uri
 const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.USER_PASS}@cluster0.rtskruf.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -103,6 +86,15 @@ async function run() {
     app.post("/AllItems", verifyJWT, async (req, res) => {
       const items = req.body;
       const result = await itemsCollection.insertOne(items);
+      res.send(result);
+    });
+
+    // single user items data load
+    app.get("/userItems/:userEmail", async (req, res) => {
+      const email = req.params.userEmail;
+      const query = { UserEmail: email };
+      const cursor = await itemsCollection.find(query);
+      const result = await cursor.toArray();
       res.send(result);
     });
 
