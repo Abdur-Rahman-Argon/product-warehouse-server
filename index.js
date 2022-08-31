@@ -106,6 +106,34 @@ async function run() {
       res.send(result);
     });
 
+    // user-post database api
+    app.put("/login/:email", async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          user: user,
+        },
+      };
+
+      const token = jwt.sign(
+        {
+          email: user.email,
+        },
+        tokenSecret,
+        { expiresIn: "1d" }
+      );
+
+      const result = await itemsCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send({ result, success: true, accessToken: token });
+    });
+
     //
   } finally {
     // await client.close();
